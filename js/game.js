@@ -18,6 +18,7 @@ window.onload = function () {
     );
     var playerStructureGroup;
     var enemyStructureGroup;
+    var addingStructureGroup;
     var playerUnits;
     var computerUnits;
     var uiResourceText;
@@ -25,6 +26,7 @@ window.onload = function () {
     var uiSelectedUnit;
     var lumber;
     var food;
+    var resources = {lumber:lumber, food:food};
     var gameOver;
     var bgm;
     var selectedUnit;
@@ -71,6 +73,7 @@ window.onload = function () {
         if (!gameOver) {
             updateCameraView();
             updateUIText();
+
         for (var j = 0; j < mapGroup.children.length; j++) {
             if (game.physics.arcade.overlap(playerUnits, mapGroup.children[j], collectResource, null, this) == false) {
                 mapGroup.children[j].alpha = 1;
@@ -84,6 +87,7 @@ window.onload = function () {
             }
             game.physics.arcade.overlap(playerUnits.children[i], playerStructureGroup, healUnit, null, this);
             game.physics.arcade.overlap(playerUnits.children[i], enemyStructureGroup, unitCombat, null, this);
+
         }
 
         for (i = 0; i < computerUnits.children.length; i++) {
@@ -99,6 +103,10 @@ window.onload = function () {
             for (var j = 0; j < computerUnits.children.length; j++) {
                 game.physics.arcade.overlap(playerUnits.children[i], computerUnits.children[j], unitCombat, null, this);
             }
+        }
+
+        if (downKey.isDown) {
+            spawnPlayerUnit();
         }
 
         }
@@ -163,7 +171,32 @@ window.onload = function () {
         }
 */
         //console.log(selectedUnit);
-/*
+
+
+        // when placing a resource and dragging over a sprite it should not overlap, tint the dragged resource red
+        Structures.update(uiGroup, playerStructureGroup, enemyStructureGroup, mapGroup, game);
+    }
+
+    function moveUnit() {
+        for (i = 0; i < playerUnits.children.length; i++) {
+            if (Phaser.Rectangle.contains(playerUnits.children[i].body, this.game.input.activePointer.x + game.camera.x, this.game.input.activePointer.y + game.camera.y)) {
+                console.log(playerUnits.children[i]);
+                selectedUnit = playerUnits.children[i];
+                console.log(selectedUnit, playerUnits.children[i]);
+                return;
+            }
+        }
+        for (i = 0; i < computerUnits.children.length; i++) {
+            if (Phaser.Rectangle.contains(computerUnits.children[i].body, this.game.input.activePointer.x + game.camera.x, this.game.input.activePointer.y + game.camera.y)) {
+                console.log(computerUnits.children[i]);
+                selectedUnit = computerUnits.children[i];
+                console.log(selectedUnit, computerUnits.children[i]);
+                return;
+            }
+        }
+
+        console.log(selectedUnit);
+
         if (game['destPoint' + selectedUnit.name]) {
             game['destPoint' + selectedUnit.name].kill();
         }
@@ -172,9 +205,11 @@ window.onload = function () {
 
         game['destPoint' + selectedUnit.name].enableBody = true;
         game.physics.arcade.enable(game['destPoint' + selectedUnit.name]);
+
         game.physics.arcade.moveToObject(selectedUnit, game['destPoint' + selectedUnit.name], VELOCITY);
       }
     }
+        game.physics.arcade.moveToObject(selectedUnit, game['destPoint' + selectedUnit.name], 60);
 
     function moveCompUnit() {
       if (!gameOver) {
@@ -198,7 +233,7 @@ window.onload = function () {
     function stopUnit(unit, destSprite) {
         unit.body.velocity.y = 0;
         unit.body.velocity.x = 0;
-        if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
+if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
             && computerUnits.getIndex(destSprite) == -1)
             destSprite.kill();
     }
@@ -207,6 +242,10 @@ window.onload = function () {
         unit.body.velocity.x = 0;
         unit.body.velocity.y = 0;
         if (unit.HP < 100000) {
+
+        destSprite.kill();
+    }
+
             unit.HP += 50;
             console.log(unit.HP);
         }
@@ -244,14 +283,15 @@ window.onload = function () {
             x = game.input.activePointer.position.x;
             y = game.input.activePointer.position.y;
 
-            if (x > CAMERA_WIDTH - TILE_LENGTH) {
+
+            if (x > CAMERA_WIDTH - TILE_LENGTH && y < CAMERA_HEIGHT - UI_HEIGHT) {
                 game.camera.x += 10;
             }
-            else if (x < TILE_LENGTH) {
+            else if (x < TILE_LENGTH && y < CAMERA_HEIGHT - UI_HEIGHT) {
                 game.camera.x -= 10;
             }
 
-            if (y > CAMERA_HEIGHT - TILE_LENGTH / 4) {
+            if (y > CAMERA_HEIGHT - UI_HEIGHT - TILE_LENGTH / 4 && y < CAMERA_HEIGHT - UI_HEIGHT * .5) {
                 game.camera.y += 10;
             }
             else if (y < TILE_LENGTH) {
@@ -264,9 +304,11 @@ window.onload = function () {
         mapGroup = game.add.group();
         playerStructureGroup = game.add.group();
         enemyStructureGroup = game.add.group();
+        addingStructureGroup = game.add.group();
+        uiGroup = game.add.group();
         playerUnits = game.add.group();
         computerUnits = game.add.group();
-        uiGroup = game.add.group();
+
     }
 
     function loadSprites() {
@@ -306,13 +348,16 @@ window.onload = function () {
                     tile = game.add.sprite(x, y, 'tree');
                     treeFlag = false;
                     tile.type = 'tree';
+
                 }
                 else {
                     tile = game.add.sprite(x, y, 'berry');
                     tile.width = TILE_LENGTH;
                     tile.height = TILE_LENGTH;
                     treeFlag = true;
+
                     tile.type = 'berry';
+
                 }
             }
             else {
@@ -333,6 +378,7 @@ window.onload = function () {
             game.physics.arcade.enable(tile);
             tile.collectFlag = true;
         }
+      
             Structures.initStructures(
               gridCoordsGenerator,
               playerStructureGroup,
@@ -361,6 +407,7 @@ window.onload = function () {
                 }
 	    }, this);
         });
+
     }
 
 
@@ -372,11 +419,28 @@ window.onload = function () {
         uiBackground.height = UI_HEIGHT;
         uiGroup.add(uiBackground);
 
-        for (var i = 1; i <= 5; i++) {
-            uiSprite = game.add.image(i * TILE_LENGTH + TILE_LENGTH / 2, CAMERA_HEIGHT - UI_HEIGHT + TILE_LENGTH + TILE_LENGTH / 2, 'structure');
+
+        addingStructureGroup.inputEnableChildren = true;
+        var structureSprites = ["sawmill", "structure", "structure", "structure", "structure"]
+        var x;
+        var y = CAMERA_HEIGHT - UI_HEIGHT + TILE_LENGTH + TILE_LENGTH / 2;
+        for (var i = 1; i <= structureSprites.length; i++) {
+            x = i * TILE_LENGTH + TILE_LENGTH / 2;
+            uiSprite = game.add.sprite(x, y, structureSprites[i-1]);
             uiSprite.anchor.setTo(0.5, 0.5);
             uiGroup.add(uiSprite);
+
+            Structures.enableStructureCreation(
+              uiGroup,
+              uiSprite, 
+              playerStructureGroup,
+              enemyStructureGroup,
+              mapGroup, 
+              resources,
+              game
+            );
         }
+
         uiResourceText = game.add.text(TILE_LENGTH + 5, CAMERA_HEIGHT - UI_HEIGHT + 5, "Lumber: " + lumber + "   Food: " + food);
         uiUnitText = game.add.text(TILE_LENGTH + 600, CAMERA_HEIGHT - UI_HEIGHT + 5, "Selected Unit: ");
         uiResourceText.fill = "white";
@@ -420,7 +484,7 @@ window.onload = function () {
         }
     }
 
-    function createUnits() {
+    function createUnits() 
         var playerUnitX = playerStructureGroup.getTop().position.x;
         var playerUnitY = playerStructureGroup.getTop().position.y;
         var computerUnitX = enemyStructureGroup.getTop().position.x;
@@ -460,6 +524,8 @@ window.onload = function () {
 
     function spawnPlayerUnit(x, y) {
         var playerUnit = playerUnits.create(x, y, 'lumberjack');
+        playerUnit.Name = "playerUnit" + unitCount;
+
         playerUnit.width = 40;
         playerUnit.height = 40;
         playerUnit.anchor.setTo(0, 0);
