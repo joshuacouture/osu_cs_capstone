@@ -31,7 +31,7 @@ var Structures = {
 		//GameUtilities.randomReplaceTilesWithKey(mapGroup, "grass", "sawmill", 1.2, 0); // tile map version
 		//GameUtilities.randomReplaceTilesWithKey(mapGroup, "grass", "dam", 1.2, 1); // tile map version
 
-		for ( var i = 200; i < coordsGenerator.tilesRemainingLeftThird(); i++ ) {
+		for ( var i = 0; i < 1; i++ ) {
 			var coords = coordsGenerator.getCoords(1);
 			var x = coords[0];
 			var y = coords[1];
@@ -40,12 +40,17 @@ var Structures = {
 			playerStructure.anchor.setTo(0, 0);
 			playerGroup.add(playerStructure);
 			playerStructure.inputEnabled = true;
-			game.physics.arcade.enable(playerStructure);
+                        game.physics.arcade.enable(playerStructure);
+			playerStructure.HP = 10000;
+
+      game.physics.arcade.enable(playerStructure);
+			playerStructure.HP = 10000;
+
 
 		}
 		
 
-		for ( var i = 200; i < coordsGenerator.tilesRemainingRightThird(); i++ ) {
+		for ( var i = 0; i < 1; i++ ) {
 			var coords = coordsGenerator.getCoords(2);
 			var x = coords[0];
 			var y = coords[1];
@@ -54,7 +59,8 @@ var Structures = {
 			enemyStructure.anchor.setTo(0, 0);
 			enemyGroup.add(enemyStructure);
 			enemyStructure.inputEnabled = true;
-			game.physics.arcade.enable(enemyStructure);
+      game.physics.arcade.enable(enemyStructure);
+			enemyStructure.HP = 10000;
 
 		}
 
@@ -130,7 +136,6 @@ var Structures = {
 		    {
 		        console.log('input disabled on', sprite.key);
 		        sprite.inputEnabled = false;
-
 		        sprite.sendToBack();  // We want this for the game map, I think - if it's not sending behind everything and then not visible
 
 		        uiGroup.remove(selectedStructure); // to remove from ui group so dragging is not checked on this sprite
@@ -140,7 +145,7 @@ var Structures = {
 		        sprite.position.x += sprite.game.camera.x;
 		        sprite.position.y += sprite.game.camera.y;
 
-		        resourcePoints.lumber -= 5;
+		        game.resources.lumber -= 5;
 
 		        // replace resource tile
 		        replacementSprite = game.add.sprite(originX, originY, sprite.key);
@@ -176,7 +181,7 @@ var Structures = {
 	update: function(addingStructureGroup, playerStructureGroup, enemyStructureGroup, mapGroup, game){
 	    // test collision with object
 	    var addingStructure;
-
+			console.log(game);
 	    for (var i = 0; i < addingStructureGroup.length; i++){
 	    	addingStructure = addingStructureGroup.children[i];
 	    	if ( ! game.physics.arcade.overlap(addingStructure, playerStructureGroup, overlapCallback) &&
