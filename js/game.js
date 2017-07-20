@@ -108,7 +108,6 @@ window.onload = function () {
         if (downKey.isDown) {
             spawnPlayerUnit();
         }
-
         }
         else {
             playerUnits.forEach(function (unit) {
@@ -155,6 +154,7 @@ window.onload = function () {
         for (i = 0; i < playerUnits.children.length; i++) {
             if (Phaser.Rectangle.contains(playerUnits.children[i].body, this.game.input.activePointer.x + game.camera.x, this.game.input.activePointer.y + game.camera.y)) {
                 //console.log(playerUnits.children[i]);
+
                 selectedUnit = playerUnits.children[i];
                 //console.log(selectedUnit, playerUnits.children[i]);
                 return;
@@ -205,7 +205,6 @@ window.onload = function () {
 
         game['destPoint' + selectedUnit.name].enableBody = true;
         game.physics.arcade.enable(game['destPoint' + selectedUnit.name]);
-
         game.physics.arcade.moveToObject(selectedUnit, game['destPoint' + selectedUnit.name], VELOCITY);
       }
     }
@@ -245,7 +244,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
 
         destSprite.kill();
     }
-
             unit.HP += 50;
             console.log(unit.HP);
         }
@@ -282,8 +280,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
         if (game.input.activePointer.isUp) {
             x = game.input.activePointer.position.x;
             y = game.input.activePointer.position.y;
-
-
             if (x > CAMERA_WIDTH - TILE_LENGTH && y < CAMERA_HEIGHT - UI_HEIGHT) {
                 game.camera.x += 10;
             }
@@ -308,7 +304,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
         uiGroup = game.add.group();
         playerUnits = game.add.group();
         computerUnits = game.add.group();
-
     }
 
     function loadSprites() {
@@ -348,14 +343,12 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
                     tile = game.add.sprite(x, y, 'tree');
                     treeFlag = false;
                     tile.type = 'tree';
-
                 }
                 else {
                     tile = game.add.sprite(x, y, 'berry');
                     tile.width = TILE_LENGTH;
                     tile.height = TILE_LENGTH;
                     treeFlag = true;
-
                     tile.type = 'berry';
 
                 }
@@ -378,7 +371,7 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
             game.physics.arcade.enable(tile);
             tile.collectFlag = true;
         }
-      
+
             Structures.initStructures(
               gridCoordsGenerator,
               playerStructureGroup,
@@ -407,7 +400,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
                 }
 	    }, this);
         });
-
     }
 
 
@@ -418,8 +410,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
         uiBackground.width = CAMERA_WIDTH;
         uiBackground.height = UI_HEIGHT;
         uiGroup.add(uiBackground);
-
-
         addingStructureGroup.inputEnableChildren = true;
         var structureSprites = ["sawmill", "structure", "structure", "structure", "structure"]
         var x;
@@ -484,7 +474,8 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
         }
     }
 
-    function createUnits() 
+
+    function createUnits() {
         var playerUnitX = playerStructureGroup.getTop().position.x;
         var playerUnitY = playerStructureGroup.getTop().position.y;
         var computerUnitX = enemyStructureGroup.getTop().position.x;
@@ -525,7 +516,6 @@ if (destSprite != undefined && playerUnits.getIndex(destSprite) == -1
     function spawnPlayerUnit(x, y) {
         var playerUnit = playerUnits.create(x, y, 'lumberjack');
         playerUnit.Name = "playerUnit" + unitCount;
-
         playerUnit.width = 40;
         playerUnit.height = 40;
         playerUnit.anchor.setTo(0, 0);

@@ -40,6 +40,8 @@ var Structures = {
 			playerStructure.anchor.setTo(0, 0);
 			playerGroup.add(playerStructure);
 			playerStructure.inputEnabled = true;
+                        game.physics.arcade.enable(playerStructure);
+			playerStructure.HP = 10000;
 
       game.physics.arcade.enable(playerStructure);
 			playerStructure.HP = 10000;
@@ -134,7 +136,6 @@ var Structures = {
 		    {
 		        console.log('input disabled on', sprite.key);
 		        sprite.inputEnabled = false;
-
 		        sprite.sendToBack();  // We want this for the game map, I think - if it's not sending behind everything and then not visible
 
 		        uiGroup.remove(selectedStructure); // to remove from ui group so dragging is not checked on this sprite
