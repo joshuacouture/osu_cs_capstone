@@ -132,7 +132,7 @@ function GridCoordinatesGenerator(gameWidth, gameHeight, tileWidth, tileHeight){
 		} else if( area == WHOLE_MAP ) {
 			index = Math.floor(Math.random() * tileArray.length);
 			rightIndex--;
-			console.log(index);
+			//console.log(index);
 		}
 	}
 
@@ -216,4 +216,17 @@ function separateOverlappingTreesBerryBushes(newSprite, mapGroup){
 		return true;
 	}
 
+}
+
+function debugAttackUndefined(game) {
+    var groups = [playerStructureGroup, enemyStructureGroup, playerUnits, computerUnits];
+    var groupNames = ["playerStructureGroup", "enemyStructureGroup", "playerUnits", "enemyUnits"];
+    for (var i = 0; i < groups.length; i++){
+        for (var j = 0; j < groups[i].children.length; j++){
+            //if ( (groups[i].children[j].Attack) && 
+                //(groups[i].children[j].Attack == undefined) ){
+                alert(groupNames[i] + " #" + j + " property Attack: " + groups[i].children[j].Attack);
+            //}
+        }
+    }
 }
